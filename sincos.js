@@ -29,20 +29,29 @@ const series = (x, offset, precision) => {
 	// to add more precision as x increases
 	x %= PI2
 
+	// Count the steps with `n`
 	let n = 0
+
+	// Set the impulse force
 	let val = x
 
-	// Start at 1 for COS
+	// When calculating Cosine, contrain the value
+	// to `1` (no initial impulse)
 	if (offset === 2) {
 		val = 1
 	}
 
+	// Until we reach our precision...
 	while (n < precision) {
-		const pos = offset + (n * 2)
-		const pow = power(x, pos)
-		const fact = factorial(pos)
+		// Calculate the step: [3, 5, 7, ...], [2, 4, 8, ...]
+		const step = offset + (n * 2)
+
+		// Calculate the sum for the current step in the series
+		const pow = power(x, step)
+		const fact = factorial(step)
 		const sum = pow / fact
 
+		// Apply the sum to the value as either an
 		// Impulse Force or Restorative Force
 		if (n % 2) {
 			val += sum
@@ -53,12 +62,14 @@ const series = (x, offset, precision) => {
 		n += 1
 	}
 
+	// Return the value after reaching our desired precision
 	return val
 }
 
 const sin = x => {
 	const sineOffset = 3
-	return series(x, sineOffset, precision)
+	const value = series(x, sineOffset, precision)
+	return value
 
 	// Example:
 	//     return x -
