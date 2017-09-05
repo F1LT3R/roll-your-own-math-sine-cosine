@@ -1,4 +1,4 @@
-const sincosPrecision = 10
+const precision = 8
 const PI2 = 6.283185307179586
 
 const power = (base, exponent) => {
@@ -13,10 +13,10 @@ const power = (base, exponent) => {
 	return val
 }
 
-const factoral = n => {
+const factorial = n => {
 	let val = n
 
-	while (n > 1) {
+	while (n > 2) {
 		val *= n - 1
 		n -= 1
 	}
@@ -24,23 +24,26 @@ const factoral = n => {
 	return val
 }
 
-const series = (x, start, depth) => {
+const series = (x, offset, precision) => {
 	// Constrain x to PI * 2 so that we don't need
 	// to add more precision as x increases
-	x %= (PI2)
+	x %= PI2
 
 	let n = 0
 	let val = x
 
 	// Start at 1 for COS
-	if (start === 2) {
+	if (offset === 2) {
 		val = 1
 	}
 
-	while (n < depth) {
-		const pos = start + (n * 2)
-		const sum = power(x, pos) / factoral(pos)
+	while (n < precision) {
+		const pos = offset + (n * 2)
+		const pow = power(x, pos)
+		const fact = factorial(pos)
+		const sum = pow / fact
 
+		// Impulse Force or Restorative Force
 		if (n % 2) {
 			val += sum
 		} else {
@@ -53,30 +56,33 @@ const series = (x, start, depth) => {
 	return val
 }
 
-const cos = y => {
-	return series(y, 2, sincosPrecision)
-}
-
 const sin = x => {
-	return series(x, 3, sincosPrecision)
+	const sineOffset = 3
+	return series(x, sineOffset, precision)
 
 	// Example:
 	//     return x -
-	//         (power(x, 3) / factoral(3)) +
-	//         (power(x, 5) / factoral(5)) -
-	//         (power(x, 7) / factoral(7)) +
-	//         (power(x, 9) / factoral(9)) -
-	//         (power(x, 11) / factoral(11)) +
-	//         (power(x, 13) / factoral(13)) -
-	//         (power(x, 15) / factoral(15)) +
-	//         (power(x, 17) / factoral(17)) -
-	//         (power(x, 19) / factoral(19))
+	//         (power(x, 3) / factorial(3)) +
+	//         (power(x, 5) / factorial(5)) -
+	//         (power(x, 7) / factorial(7)) +
+	//         (power(x, 9) / factorial(9)) -
+	//         (power(x, 11) / factorial(11)) +
+	//         (power(x, 13) / factorial(13)) -
+	//         (power(x, 15) / factorial(15)) +
+	//         (power(x, 17) / factorial(17)) -
+	//         (power(x, 19) / factorial(19))
+}
+
+const cos = x => {
+	const cosineOffset = 2
+	return series(x, cosineOffset, precision)
 }
 
 const canvas = document.getElementsByTagName('canvas')[0]
 canvas.width = 200
 canvas.height = 200
 const ctx = canvas.getContext('2d')
+ctx.lineWidth = 3
 
 const x = canvas.width / 2
 const y = canvas.height / 2
